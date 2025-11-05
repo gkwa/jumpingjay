@@ -38,7 +38,7 @@ def format_time(future_time: datetime.datetime, time_format: str) -> str:
 
 def durationsince() -> None:
     parser = argparse.ArgumentParser(
-        description="Calculate duration since a given time"
+        description="Calculate duration since a given time",
     )
     _ = parser.add_argument("time_str", help="Time to calculate duration from")
     _ = parser.add_argument(
@@ -87,7 +87,7 @@ def durationsince() -> None:
 
 def durationtill() -> None:
     parser = argparse.ArgumentParser(
-        description="Calculate duration until a given time"
+        description="Calculate duration until a given time",
     )
     _ = parser.add_argument("time_str", help="Time to calculate duration until")
     _ = parser.add_argument(
@@ -136,10 +136,10 @@ def durationtill() -> None:
 
 def at() -> None:
     parser = argparse.ArgumentParser(
-        description="Calculate the time at a given duration from now"
+        description="Calculate the time at a given duration from now",
     )
     _ = parser.add_argument(
-        "duration_str", help="Duration from now (e.g., 8h2m, 2d, 30m)"
+        "duration_str", help="Duration from now (e.g., 8h2m, 2d, 30m)",
     )
     _ = parser.add_argument(
         "-f",
@@ -173,7 +173,7 @@ def at() -> None:
         )
 
         duration_obj = parsed_duration - datetime.datetime(
-            1970, 1, 1, tzinfo=parsed_duration.tzinfo
+            1970, 1, 1, tzinfo=parsed_duration.tzinfo,
         )
         future_time = now + duration_obj
         formatted_time = format_time(future_time, time_format)
