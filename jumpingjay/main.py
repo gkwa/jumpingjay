@@ -37,7 +37,7 @@ def durationsince(time_str: str, verbose: int) -> None:
     level = log_levels[min(verbose, len(log_levels) - 1)]
     logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
 
-    logger.debug(f"Parsing time string: {time_str}")
+    logger.debug("Parsing time string: %s", time_str)
 
     try:
         parsed_time = dateutil.parser.parse(
@@ -52,17 +52,17 @@ def durationsince(time_str: str, verbose: int) -> None:
             logger.debug("Parsed time is in the future, assuming it was yesterday")
             parsed_time = parsed_time - datetime.timedelta(days=1)
 
-        logger.debug(f"Parsed time: {parsed_time}")
-        logger.debug(f"Current time: {now}")
+        logger.debug("Parsed time: %s", parsed_time)
+        logger.debug("Current time: %s", now)
 
         duration = now - parsed_time
-        logger.debug(f"Duration: {duration}")
+        logger.debug("Duration: %s", duration)
 
         formatted = format_duration(duration)
         print(formatted)
 
     except Exception as e:
-        logger.error(f"Error parsing time: {e}")
+        logger.error("Error parsing time: %s", e)
         raise click.Abort()
 
 

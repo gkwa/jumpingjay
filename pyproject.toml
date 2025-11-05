@@ -4,10 +4,7 @@ version = "0.1.0"
 description = "Calculate duration since a given time"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [
-    "click>=8.0.0",
-    "python-dateutil>=2.8.0",
-]
+dependencies = ["click>=8.0.0", "python-dateutil>=2.8.0"]
 
 [project.scripts]
 durationsince = "jumpingjay.main:durationsince"
@@ -16,7 +13,60 @@ durationsince = "jumpingjay.main:durationsince"
 preview = true
 
 [tool.ruff.lint]
-select = ["A", "AIR", "ARG", "ASYNC", "ASYNC1", "B", "C", "C4", "C90", "DJ", "DTZ", "E", "EM", "ERA", "EXE", "F", "FA", "FBT", "FIX", "FLY", "G", "I", "ICN", "INP", "INT", "ISC", "LOG", "N", "NPY", "PD", "PIE", "PL", "PT", "PTH", "PYI", "Q", "R", "RET", "RSE", "RUF", "S", "SIM", "SLF", "SLOT", "T10", "T20", "TD", "TID", "TRY", "UP", "W", "YTT"]
+select = [
+  "A",
+  "AIR",
+  "ARG",
+  "ASYNC",
+  "ASYNC1",
+  "B",
+  "C",
+  "C4",
+  "C90",
+  "DJ",
+  "DTZ",
+  "E",
+  "EM",
+  "ERA",
+  "EXE",
+  "F",
+  "FA",
+  "FBT",
+  "FIX",
+  "FLY",
+  "G",
+  "I",
+  "ICN",
+  "INP",
+  "INT",
+  "ISC",
+  "LOG",
+  "N",
+  "NPY",
+  "PD",
+  "PIE",
+  "PL",
+  "PT",
+  "PTH",
+  "PYI",
+  "Q",
+  "R",
+  "RET",
+  "RSE",
+  "RUF",
+  "S",
+  "SIM",
+  "SLF",
+  "SLOT",
+  "T10",
+  "T20",
+  "TD",
+  "TID",
+  "TRY",
+  "UP",
+  "W",
+  "YTT",
+]
 
 [tool.pyright]
 venvPath = "."
