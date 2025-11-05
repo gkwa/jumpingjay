@@ -29,6 +29,13 @@ def format_duration(td: datetime.timedelta) -> str:
     return "".join(parts) if parts else "0m"
 
 
+def format_time(future_time: datetime.datetime, time_format: str) -> str:
+    """Format time based on the specified format."""
+    if time_format == "am/pm":
+        return future_time.strftime("%I:%M %p")
+    return future_time.strftime("%H:%M")
+
+
 def durationsince() -> None:
     parser = argparse.ArgumentParser(
         description="Calculate duration since a given time"
@@ -127,11 +134,68 @@ def durationtill() -> None:
     print(formatted)
 
 
+def at() -> None:
+    parser = argparse.ArgumentParser(
+        description="Calculate the time at a given duration from now"
+    )
+    _ = parser.add_argument(
+        "duration_str", help="Duration from now (e.g., 8h2m, 2d, 30m)"
+    )
+    _ = parser.add_argument(
+        "-f",
+        "--format",
+        choices=["24h", "am/pm"],
+        default="am/pm",
+        help="Time format (default: am/pm)",
+    )
+    _ = parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity (-v, -vv, -vvv)",
+    )
+
+    args = parser.parse_args()
+
+    log_levels = [logging.WARNING, logging.INFO, logging.DEBUG]
+    level: int = log_levels[min(args.verbose, len(log_levels) - 1)]
+    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+
+    duration_str: str = args.duration_str
+    time_format: str = args.format
+
+    try:
+        now = datetime.datetime.now(tz=datetime.UTC).astimezone()
+        parsed_duration = dateutil.parser.parse(
+            f"1970-01-01 {duration_str}",
+            default=datetime.datetime(1970, 1, 1),
+        )
+
+        duration_obj = parsed_duration - datetime.datetime(
+            1970, 1, 1, tzinfo=parsed_duration.tzinfo
+        )
+        future_time = now + duration_obj
+        formatted_time = format_time(future_time, time_format)
+
+        logger.debug("Parsing duration string: %s", duration_str)
+        logger.debug("Parsed duration: %s", duration_obj)
+        logger.debug("Current time: %s", now)
+        logger.debug("Future time: %s", future_time)
+        logger.debug("Time format: %s", time_format)
+
+    except Exception:
+        logger.exception("Error parsing duration")
+        sys.exit(1)
+
+    print(formatted_time)
+
+
 def list_commands() -> None:
     """List all available commands."""
     parser = argparse.ArgumentParser(
         description="jumpingjay - Calculate time durations",
-        epilog="Available commands: durationsince, durationtill",
+        epilog="Available commands: durationsince, durationtill, at",
     )
     _ = parser.add_argument(
         "--list",
@@ -144,6 +208,7 @@ def list_commands() -> None:
     if args.list:
         print("durationsince")
         print("durationtill")
+        print("at")
     else:
         parser.print_help()
 

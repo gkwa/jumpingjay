@@ -9,6 +9,7 @@ dependencies = ["python-dateutil>=2.8.0"]
 [project.scripts]
 durationsince = "jumpingjay.main:durationsince"
 durationtill = "jumpingjay.main:durationtill"
+at = "jumpingjay.main:at"
 jumpingjay = "jumpingjay.main:list_commands"
 
 [tool.ruff]
