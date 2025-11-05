@@ -49,10 +49,9 @@ def main() -> None:
     logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
 
     time_str: str = args.time_str
-    logger.debug("Parsing time string: %s", time_str)
 
     try:
-        now = datetime.datetime.now(tz=datetime.timezone.utc).astimezone()
+        now = datetime.datetime.now(tz=datetime.UTC).astimezone()
         parsed_time = dateutil.parser.parse(
             time_str,
             default=now.replace(hour=0, minute=0, second=0, microsecond=0),
@@ -62,21 +61,21 @@ def main() -> None:
             parsed_time = parsed_time.replace(tzinfo=now.tzinfo)
 
         if parsed_time > now:
-            logger.debug("Parsed time is in the future, assuming it was yesterday")
             parsed_time -= datetime.timedelta(days=1)
 
+        duration = now - parsed_time
+        formatted = format_duration(duration)
+
+        logger.debug("Parsing time string: %s", time_str)
         logger.debug("Parsed time: %s", parsed_time)
         logger.debug("Current time: %s", now)
-
-        duration = now - parsed_time
         logger.debug("Duration: %s", duration)
-
-        formatted = format_duration(duration)
-        print(formatted)
 
     except Exception:
         logger.exception("Error parsing time")
         sys.exit(1)
+
+    print(formatted)
 
 
 if __name__ == "__main__":
