@@ -14,7 +14,7 @@ def format_duration(td: datetime.timedelta) -> str:
     days = total_seconds // 86400
     remaining = total_seconds % 86400
     hours = remaining // 3600
-    remaining = remaining % 3600
+    remaining %= 3600
     minutes = remaining // 60
 
     parts: list[str] = []
@@ -40,17 +40,18 @@ def durationsince(time_str: str, verbose: int) -> None:
     logger.debug("Parsing time string: %s", time_str)
 
     try:
+        now = datetime.datetime.now(tz=datetime.UTC).astimezone()
         parsed_time = dateutil.parser.parse(
             time_str,
-            default=datetime.datetime.now().replace(
-                hour=0, minute=0, second=0, microsecond=0
-            ),
+            default=now.replace(hour=0, minute=0, second=0, microsecond=0),
         )
-        now = datetime.datetime.now()
+
+        if parsed_time.tzinfo is None:
+            parsed_time = parsed_time.replace(tzinfo=now.tzinfo)
 
         if parsed_time > now:
             logger.debug("Parsed time is in the future, assuming it was yesterday")
-            parsed_time = parsed_time - datetime.timedelta(days=1)
+            parsed_time -= datetime.timedelta(days=1)
 
         logger.debug("Parsed time: %s", parsed_time)
         logger.debug("Current time: %s", now)
@@ -59,11 +60,11 @@ def durationsince(time_str: str, verbose: int) -> None:
         logger.debug("Duration: %s", duration)
 
         formatted = format_duration(duration)
-        print(formatted)
+        click.echo(formatted)
 
     except Exception as e:
-        logger.error("Error parsing time: %s", e)
-        raise click.Abort()
+        logger.exception("Error parsing time: %s", e)
+        raise click.Abort from e
 
 
 def main() -> None:
