@@ -9,7 +9,8 @@ dependencies = [
 ]
 
 [project.scripts]
-durationsince = "jumpingjay.main:main"
+durationsince = "jumpingjay.main:durationsince"
+durationtill = "jumpingjay.main:durationtill"
 
 [tool.ruff]
 preview = true

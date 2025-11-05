@@ -29,7 +29,7 @@ def format_duration(td: datetime.timedelta) -> str:
     return "".join(parts) if parts else "0m"
 
 
-def main() -> None:
+def durationsince() -> None:
     parser = argparse.ArgumentParser(
         description="Calculate duration since a given time"
     )
@@ -76,6 +76,59 @@ def main() -> None:
         sys.exit(1)
 
     print(formatted)
+
+
+def durationtill() -> None:
+    parser = argparse.ArgumentParser(
+        description="Calculate duration until a given time"
+    )
+    _ = parser.add_argument("time_str", help="Time to calculate duration until")
+    _ = parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity (-v, -vv, -vvv)",
+    )
+
+    args = parser.parse_args()
+
+    log_levels = [logging.WARNING, logging.INFO, logging.DEBUG]
+    level: int = log_levels[min(args.verbose, len(log_levels) - 1)]
+    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+
+    time_str: str = args.time_str
+
+    try:
+        now = datetime.datetime.now(tz=datetime.UTC).astimezone()
+        parsed_time = dateutil.parser.parse(
+            time_str,
+            default=now.replace(hour=0, minute=0, second=0, microsecond=0),
+        )
+
+        if parsed_time.tzinfo is None:
+            parsed_time = parsed_time.replace(tzinfo=now.tzinfo)
+
+        if parsed_time < now:
+            parsed_time += datetime.timedelta(days=1)
+
+        duration = parsed_time - now
+        formatted = format_duration(duration)
+
+        logger.debug("Parsing time string: %s", time_str)
+        logger.debug("Parsed time: %s", parsed_time)
+        logger.debug("Current time: %s", now)
+        logger.debug("Duration: %s", duration)
+
+    except Exception:
+        logger.exception("Error parsing time")
+        sys.exit(1)
+
+    print(formatted)
+
+
+def main() -> None:
+    durationsince()
 
 
 if __name__ == "__main__":
