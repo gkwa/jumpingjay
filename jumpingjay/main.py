@@ -139,7 +139,8 @@ def at() -> None:
         description="Calculate the time at a given duration from now",
     )
     _ = parser.add_argument(
-        "duration_str", help="Duration from now (e.g., 8h2m, 2d, 30m)",
+        "duration_str",
+        help="Duration from now (e.g., 8h2m, 2d, 30m)",
     )
     _ = parser.add_argument(
         "-f",
@@ -173,7 +174,10 @@ def at() -> None:
         )
 
         duration_obj = parsed_duration - datetime.datetime(
-            1970, 1, 1, tzinfo=parsed_duration.tzinfo,
+            1970,
+            1,
+            1,
+            tzinfo=parsed_duration.tzinfo,
         )
         future_time = now + duration_obj
         formatted_time = format_time(future_time, time_format)
