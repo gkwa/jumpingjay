@@ -134,7 +134,7 @@ def durationtill() -> None:
     print(formatted)
 
 
-def at() -> None:
+def timein() -> None:
     parser = argparse.ArgumentParser(
         description="Calculate the time at a given duration from now",
     )
@@ -199,7 +199,7 @@ def list_commands() -> None:
     """List all available commands."""
     parser = argparse.ArgumentParser(
         description="jumpingjay - Calculate time durations",
-        epilog="Available commands: durationsince, durationtill, at",
+        epilog="Available commands: durationsince, durationtill, timein",
     )
     _ = parser.add_argument(
         "--list",
@@ -212,7 +212,7 @@ def list_commands() -> None:
     if args.list:
         print("durationsince")
         print("durationtill")
-        print("at")
+        print("timein")
     else:
         parser.print_help()
 
