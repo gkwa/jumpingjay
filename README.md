@@ -21,7 +21,11 @@ uvx --from git+https://github.com/gkwa/jumpingjay durationsince 1pm
 ```bash
   uvx --from . durationtill 2pm
 ```
-
+- `durationbetween` (alias: `dbt`) - Calculate duration between two times
+```bash
+  uvx --from . durationbetween 9am 5pm
+  uvx --from . dbt 9am 5pm
+```
 - `timein` - Calculate the time at a given duration from now
 
 ```bash
@@ -42,7 +46,10 @@ uvx --from . durationsince 1pm
 
 # How long until 5:30pm?
 uvx --from . durationtill 5:30pm
-
+# How long between 8:17pm and 6:30am the next day?
+uvx --from . durationbetween 8:17pm 6:30am
+# Short alias
+uvx --from . dbt 9am 5pm
 # What time will it be in 15 hours and 30 minutes?
 uvx --from . timein 15h30m
 

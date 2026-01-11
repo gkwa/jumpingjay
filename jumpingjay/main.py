@@ -126,7 +126,58 @@ def durationtill() -> None:
         logger.debug("Parsed time: %s", parsed_time)
         logger.debug("Current time: %s", now)
         logger.debug("Duration: %s", duration)
+    except Exception:
+        logger.exception("Error parsing time")
+        sys.exit(1)
 
+    print(formatted)
+
+
+def durationbetween() -> None:
+    parser = argparse.ArgumentParser(
+        description="Calculate duration between two times",
+    )
+    _ = parser.add_argument("start_time", help="Start time")
+    _ = parser.add_argument("end_time", help="End time")
+    _ = parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity (-v, -vv, -vvv)",
+    )
+    args = parser.parse_args()
+
+    log_levels = [logging.WARNING, logging.INFO, logging.DEBUG]
+    level: int = log_levels[min(args.verbose, len(log_levels) - 1)]
+    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
+
+    start_str: str = args.start_time
+    end_str: str = args.end_time
+
+    try:
+        now = datetime.datetime.now(tz=datetime.UTC).astimezone()
+        default_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        start_time = dateutil.parser.parse(start_str, default=default_date)
+        if start_time.tzinfo is None:
+            start_time = start_time.replace(tzinfo=now.tzinfo)
+
+        end_time = dateutil.parser.parse(end_str, default=default_date)
+        if end_time.tzinfo is None:
+            end_time = end_time.replace(tzinfo=now.tzinfo)
+
+        if end_time < start_time:
+            end_time += datetime.timedelta(days=1)
+
+        duration = end_time - start_time
+        formatted = format_duration(duration)
+
+        logger.debug("Start time string: %s", start_str)
+        logger.debug("End time string: %s", end_str)
+        logger.debug("Parsed start time: %s", start_time)
+        logger.debug("Parsed end time: %s", end_time)
+        logger.debug("Duration: %s", duration)
     except Exception:
         logger.exception("Error parsing time")
         sys.exit(1)
@@ -199,7 +250,7 @@ def list_commands() -> None:
     """List all available commands."""
     parser = argparse.ArgumentParser(
         description="jumpingjay - Calculate time durations",
-        epilog="Available commands: durationsince, durationtill, timein",
+        epilog="Available commands: durationsince, durationtill, durationbetween (dbt), timein",
     )
     _ = parser.add_argument(
         "--list",
@@ -212,6 +263,7 @@ def list_commands() -> None:
     if args.list:
         print("durationsince")
         print("durationtill")
+        print("durationbetween (alias: dbt)")
         print("timein")
     else:
         parser.print_help()
