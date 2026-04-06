@@ -8,23 +8,36 @@ import dateutil.parser
 logger = logging.getLogger(__name__)
 
 
-def format_duration(td: datetime.timedelta) -> str:
-    """Format timedelta as XdXhXm without seconds."""
+def format_duration(td: datetime.timedelta, unit: str = "days") -> str:
+    """Format timedelta using largest unit as specified (days, hours, minutes)."""
     total_seconds = int(td.total_seconds())
 
-    days = total_seconds // 86400
-    remaining = total_seconds % 86400
-    hours = remaining // 3600
-    remaining %= 3600
-    minutes = remaining // 60
-
     parts: list[str] = []
-    if days > 0:
-        parts.append(f"{days}d")
-    if hours > 0:
-        parts.append(f"{hours}h")
-    if minutes > 0:
-        parts.append(f"{minutes}m")
+
+    if unit == "days":
+        days = total_seconds // 86400
+        remaining = total_seconds % 86400
+        hours = remaining // 3600
+        remaining %= 3600
+        minutes = remaining // 60
+        if days > 0:
+            parts.append(f"{days}d")
+        if hours > 0:
+            parts.append(f"{hours}h")
+        if minutes > 0:
+            parts.append(f"{minutes}m")
+    elif unit == "hours":
+        hours = total_seconds // 3600
+        remaining = total_seconds % 3600
+        minutes = remaining // 60
+        if hours > 0:
+            parts.append(f"{hours}h")
+        if minutes > 0:
+            parts.append(f"{minutes}m")
+    elif unit == "minutes":
+        minutes = total_seconds // 60
+        if minutes > 0:
+            parts.append(f"{minutes}m")
 
     return "".join(parts) if parts else "0m"
 
@@ -41,6 +54,12 @@ def durationsince() -> None:
         description="Calculate duration since a given time",
     )
     _ = parser.add_argument("time_str", help="Time to calculate duration from")
+    _ = parser.add_argument(
+        "--unit",
+        choices=["days", "hours", "minutes"],
+        default="days",
+        help="Largest unit to use in output (default: days)",
+    )
     _ = parser.add_argument(
         "-v",
         "--verbose",
@@ -71,7 +90,7 @@ def durationsince() -> None:
             parsed_time -= datetime.timedelta(days=1)
 
         duration = now - parsed_time
-        formatted = format_duration(duration)
+        formatted = format_duration(duration, unit=args.unit)
 
         logger.debug("Parsing time string: %s", time_str)
         logger.debug("Parsed time: %s", parsed_time)
@@ -90,6 +109,12 @@ def durationtill() -> None:
         description="Calculate duration until a given time",
     )
     _ = parser.add_argument("time_str", help="Time to calculate duration until")
+    _ = parser.add_argument(
+        "--unit",
+        choices=["days", "hours", "minutes"],
+        default="days",
+        help="Largest unit to use in output (default: days)",
+    )
     _ = parser.add_argument(
         "-v",
         "--verbose",
@@ -120,7 +145,7 @@ def durationtill() -> None:
             parsed_time += datetime.timedelta(days=1)
 
         duration = parsed_time - now
-        formatted = format_duration(duration)
+        formatted = format_duration(duration, unit=args.unit)
 
         logger.debug("Parsing time string: %s", time_str)
         logger.debug("Parsed time: %s", parsed_time)
@@ -139,6 +164,12 @@ def durationbetween() -> None:
     )
     _ = parser.add_argument("start_time", help="Start time")
     _ = parser.add_argument("end_time", help="End time")
+    _ = parser.add_argument(
+        "--unit",
+        choices=["days", "hours", "minutes"],
+        default="days",
+        help="Largest unit to use in output (default: days)",
+    )
     _ = parser.add_argument(
         "-v",
         "--verbose",
@@ -171,7 +202,7 @@ def durationbetween() -> None:
             end_time += datetime.timedelta(days=1)
 
         duration = end_time - start_time
-        formatted = format_duration(duration)
+        formatted = format_duration(duration, unit=args.unit)
 
         logger.debug("Start time string: %s", start_str)
         logger.debug("End time string: %s", end_str)
